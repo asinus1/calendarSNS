@@ -82,10 +82,8 @@ router.get('/:eventId', (req, res, next) => {
 });
 
 router.post('/:eventId/follow/:userId', authenticationEnsurer, (req, res, next) => {
-  const userId = parseInt(req.params.userId);
+  const userId = req.params.userId;
   const eventId = req.params.eventId;
-  console.log(userId);
-  console.log(eventId);
   let isFollowed = req.body.isFollowed;
   isFollowed = isFollowed ? parseInt(isFollowed) : 0;
   User.findOne({
