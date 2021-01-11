@@ -45,4 +45,34 @@ $('.noAuthenticatedFollowButton').each((i, e) => {
   button.click(() => {
     location.href = "/login";
   })
-})
+});
+
+$('.eventfollow-toggle-button').each((i, e) => {
+  const button = $(e);
+  button.click(() => {
+    const userId = button.data('user-id');
+    const eventId = button.data('event-id');
+    const isFollowed = parseInt(button.data('isfollowed'));
+    const isFollowed_next = 1 - isFollowed;
+    if (isFollowed) {
+      $.post(`/events/${eventId}/unfollow/${userId}`, {isFollowed: isFollowed_next}, data => {
+        button.data('isfollowed', data.isFollowed);
+        const buttonLabels = ['イベントをフォローする', 'フォローしています'];
+        button.text(buttonLabels[data.isFollowed]);
+      });
+    } else {
+      $.post(`/events/${eventId}/follow/${userId}`, {isFollowed: isFollowed_next}, data => {
+        button.data('isfollowed', data.isFollowed);
+        const buttonLabels = ['イベントをフォローする', 'フォローしています'];
+        button.text(buttonLabels[data.isFollowed]);
+      });      
+    }    
+  });
+});
+
+$('.noAuthenticatedEventFollowButton').each((i, e) => {
+  const button = $(e);
+  button.click(() => {
+    location.href = "/login";
+  })
+});

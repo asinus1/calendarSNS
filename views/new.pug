@@ -13,6 +13,9 @@ block content
       label(for="eventtime") 開始時間
       input(type="datetime-local" name="eventtime")#eventtime.form-control
     div.form-group
+      label(for="eventurl") URL
+      input(type="url" name="eventurl")#eventurl.form-control
+    div.form-group
       label(for="eventdesc") イベント詳細
       textarea(name="eventdesc")#eventdesc.form-control
     button(type="submit").btn.btn-info イベントをカレンダーに登録

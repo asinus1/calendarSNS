@@ -14,14 +14,11 @@ block content
         tr
           th イベント名
           th 日時
-          th 投稿者
         each event in events
           tr
             td
               a(href=`/events/${event.eventId}`) #{event.eventName}
             td #{event.formattedEventTime}
-            td 
-              a(href=`/${event.createdByName}`) #{event.createdByName}
     else
       table.table
         tr

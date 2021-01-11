@@ -22,6 +22,10 @@ const Event = loader.database.define(
       type: Sequelize.DATE,
       allowNull: false
     },
+    eventUrl: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
     eventDesc: {
       type: Sequelize.TEXT,
       allowNull: false

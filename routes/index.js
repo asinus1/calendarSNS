@@ -4,12 +4,85 @@ const authenticationEnsurer = require('./authentication-ensurer');
 const Event = require('../models/event');
 const User = require('../models/user');
 const Follow = require('../models/follow');
+const Eventfollow = require('../models/eventfollow');
 const moment = require('moment-timezone');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   const title = 'あなたのカレンダー';
   if (req.user) {
+    /*
+    Eventfollow.findAll({
+      include: [
+        {
+          model: User,
+          attributes: ['userId'],
+          required: true,
+          include: [
+            {
+              model: Follow,
+              where: {
+                follow: req.user.id
+              },
+              required: true
+            }
+          ]
+        }
+      ],
+      required: true
+    })
+    */
+    Event.findAll({
+      include: [
+        {
+          model: Eventfollow,
+          required: true,
+          include: [
+            {
+              model: User,
+              attributes: ['userId'],
+              required: true,
+              include: [
+                {
+                  model: Follow,
+                  where: {
+                    follow: req.user.id
+                  },
+                  required: true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    })
+   /*
+    Eventfollow.findAll({
+      include: [
+        {
+          model: Event,
+          required: true,
+          include: [
+            {
+              model: User,
+              attributes: ['userId'],
+              required: true,
+              include: [
+                {
+                  model: Follow,
+                  where: {
+                    follow: req.user.id
+                  },
+                  required: true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    })
+    */
+    /*
     Event.findAll({
       include: [
         {
@@ -28,7 +101,9 @@ router.get('/', function(req, res, next) {
         }
       ],
       order: [['eventTime', 'ASC']]
-    }).then(events => {
+    })
+    */
+    .then(events => {
       events.forEach((event) => {
         event.formattedEventTime = moment(event.eventTime).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
       });

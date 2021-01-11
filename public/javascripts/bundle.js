@@ -145,6 +145,39 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.noAuthenticatedFollowButton').ea
     location.href = "/login";
   });
 });
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.eventfollow-toggle-button').each(function (i, e) {
+  var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
+  button.click(function () {
+    var userId = button.data('user-id');
+    var eventId = button.data('event-id');
+    var isFollowed = parseInt(button.data('isfollowed'));
+    var isFollowed_next = 1 - isFollowed;
+
+    if (isFollowed) {
+      jquery__WEBPACK_IMPORTED_MODULE_0___default.a.post("/events/".concat(eventId, "/unfollow/").concat(userId), {
+        isFollowed: isFollowed_next
+      }, function (data) {
+        button.data('isfollowed', data.isFollowed);
+        var buttonLabels = ['イベントをフォローする', 'フォローしています'];
+        button.text(buttonLabels[data.isFollowed]);
+      });
+    } else {
+      jquery__WEBPACK_IMPORTED_MODULE_0___default.a.post("/events/".concat(eventId, "/follow/").concat(userId), {
+        isFollowed: isFollowed_next
+      }, function (data) {
+        button.data('isfollowed', data.isFollowed);
+        var buttonLabels = ['イベントをフォローする', 'フォローしています'];
+        button.text(buttonLabels[data.isFollowed]);
+      });
+    }
+  });
+});
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.noAuthenticatedEventFollowButton').each(function (i, e) {
+  var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
+  button.click(function () {
+    location.href = "/login";
+  });
+});
 
 /***/ }),
 /* 1 */

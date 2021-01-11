@@ -11,16 +11,23 @@ var dotenv = require('dotenv').config();
 var User = require('./models/user');
 var Event = require('./models/event');
 var Follow = require('./models/follow');
+var Eventfollow = require('./models/eventfollow');
 
 User.sync().then(() => {
   Event.belongsTo(User, {foreignKey: 'createdBy'});
-  Event.sync();
+  Event.hasMany(Eventfollow, {foreignKey: 'eventfollowed'});
+  Event.sync().then(() => {
+    Eventfollow.belongsTo(Event, {foreignKey: 'eventfollowed'});
+    Eventfollow.belongsTo(User, {foreignKey: 'follow'});
+    Eventfollow.sync();
+  });
 });
 
 Follow.sync().then(() => {
   User.hasMany(Follow, {foreignKey: 'followed'});
   User.sync();
-})
+});
+
 
 
 var TwitterStrategy = require('passport-twitter').Strategy;

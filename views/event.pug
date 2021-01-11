@@ -1,6 +1,20 @@
 extends layout
 
 block content
+  - var buttonLabels = ['イベントをフォローする', 'フォローしています']
+  if user
+    if isFollowed
+      button(class="eventfollow-toggle-button nav-link btn-outline-success"
+        data-user-id=user.id
+        data-event-id=event.eventId
+        data-isfollowed=isFollowed) #{buttonLabels[isFollowed]}
+    else
+      button(class="eventfollow-toggle-button nav-link btn-outline-success"
+        data-user-id=user.id
+        data-event-id=event.eventId
+        data-isfollowed=isFollowed) #{buttonLabels[isFollowed]}
+  else
+    button.noAuthenticatedEventFollowButton.nav-link.btn-outline-success フォローする
   div.card.my-3
     div.card-body
       h4.card-title #{event.eventName} 
@@ -12,4 +26,14 @@ block content
         p 
           span 投稿者: 
           a(href=`/${event.createdByName}`) #{event.createdByName}
+      h6.card-subtitle
+        p 
+          span URL: 
+          a(href=`${event.eventUrl}`) #{event.eventUrl}
       p.card-text #{event.eventDesc}
+      h5.my-3 このイベントのフォロワー
+      table.table
+        each eventfollower in eventfollowers
+          tr
+            td
+              a(href=`/${eventfollower.followname}`) #{eventfollower.followname}

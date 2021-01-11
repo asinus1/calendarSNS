@@ -5,6 +5,7 @@ const authenticationEnsurer = require('./authentication-ensurer');
 const uuid = require('uuid');
 const Event = require('../models/event');
 const User = require('../models/user');
+const Eventfollow = require('../models/eventfollow');
 const moment = require('moment-timezone');
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
@@ -22,12 +23,19 @@ router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
     eventName: req.body.eventname.slice(0,255) || '名称未設定',
     eventPlace: req.body.eventplace.slice(0,255) || '場所未設定',
     eventTime: eventTime,
+    eventUrl: req.body.eventurl,
     eventDesc: req.body.eventdesc,
     createdBy: req.user.id,
     createdByName: req.user.username,
     updatedAt: updatedAt
   }).then(() => {
-    res.redirect('/events/' + eventId);
+    Eventfollow.create({
+      follow: req.user.id,
+      eventfollowed: eventId,
+      followname: req.user.username
+    }).then(() => {
+      res.redirect('/events/' + eventId);
+    })
   });
 });
 
@@ -45,15 +53,68 @@ router.get('/:eventId', (req, res, next) => {
     order: [['eventTime', 'ASC']]
   }).then((event) => {
     if (event) {
-      event.formattedEventTime = moment(event.eventTime).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
-      res.render('event', {
-        event: event
-      });
+      Eventfollow.findAll({
+        where: {
+          eventfollowed: req.params.eventId
+        }
+      }).then((eventfollowers) => {
+        let isFollowed = 0;
+        eventfollowers.some((ef) => {
+          if (ef.follow === req.user.id) {
+            isFollowed = 1;
+            return true;
+          }
+        });
+        event.formattedEventTime = moment(event.eventTime).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
+        res.render('event', {
+          user: req.user,
+          isFollowed: isFollowed,
+          event: event,
+          eventfollowers: eventfollowers
+        });
+      })
     } else {
       const err = new Error('指定されたイベントは見つかりませんでした');
       err.status = 404;
       next(err);
     }
+  });
+});
+
+router.post('/:eventId/follow/:userId', authenticationEnsurer, (req, res, next) => {
+  const userId = parseInt(req.params.userId);
+  const eventId = req.params.eventId;
+  console.log(userId);
+  console.log(eventId);
+  let isFollowed = req.body.isFollowed;
+  isFollowed = isFollowed ? parseInt(isFollowed) : 0;
+  User.findOne({
+    where: {
+      userId: userId
+    }
+  }).then((user) => {
+    Eventfollow.upsert({
+      follow: userId,
+      eventfollowed: eventId,
+      followname: user.username
+    }).then(() => {
+      res.json({ status: 'OK', isFollowed: isFollowed });
+    });
+  });
+});
+
+router.post('/:eventId/unfollow/:userId', authenticationEnsurer, (req, res, next) => {
+  const userId = req.params.userId;
+  const eventId = req.params.eventId;
+  let isFollowed = req.body.isFollowed;
+  isFollowed = isFollowed ? parseInt(isFollowed) : 0;
+  Eventfollow.destroy({
+    where: {
+      follow: userId,
+      eventfollowed: eventId
+    }
+  }).then(() => {
+    res.json({ status: 'OK', isFollowed: isFollowed});
   });
 });
 
