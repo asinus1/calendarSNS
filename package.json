@@ -25,6 +25,7 @@
     "pg-hstore": "^2.3.3",
     "popper.js": "^1.16.1",
     "pug": "2.0.0-beta11",
+    "request": "^2.88.2",
     "sequelize": "^6.3.5",
     "uuid": "^8.3.2"
   },
