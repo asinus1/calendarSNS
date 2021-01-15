@@ -17,21 +17,11 @@ block content
     button.noAuthenticatedEventFollowButton.nav-link.btn-outline-success フォローする
   div.card.my-3
     div.card-body
-      h4.card-title #{event.eventName} 
-      h6.card-subtitle 
-        p 開催地: #{event.eventPlace}
-      h6.card-subtitle 
-        p 開始時刻: #{event.formattedEventTime}
-      h6.card-subtitle
-        p 
-          span 投稿者: 
-          a(href=`/${event.createdByName}`) #{event.createdByName}
-      h6.card-subtitle
-        p 
-          span URL: 
-          a(href=`${event.eventUrl}`) #{event.eventUrl}
-      p.card-text #{event.eventDesc}
-      h5.my-3 このイベントのフォロワー
+      h4.card-title 
+        a(href=`${event.eventUrl}`) #{event.eventName}
+      - var followersNumber = eventfollowers.length
+      p.card-text #{followersNumber}人がこのイベントをフォローしています
+      h6.my-3 このイベントのフォロワー
       table.table
         each eventfollower in eventfollowers
           tr

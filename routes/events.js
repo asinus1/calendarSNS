@@ -9,6 +9,8 @@ const Eventfollow = require('../models/eventfollow');
 const moment = require('moment-timezone');
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
+const request = require('request');
+const cheerio = require('cheerio');
 
 router.get('/new', authenticationEnsurer, csrfProtection, (req, res, next) => {
   res.render('new', { user: req.user, csrfToken: req.csrfToken() });
@@ -18,9 +20,39 @@ router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
   const eventId = uuid.v4();
   const updatedAt = new Date();
   const eventTime = new Date(req.body.eventtime);
+  let eventTitle = '';
+  request(req.body.eventurl, (err, res2, body) => {
+    if (err) {
+      console.error(err);
+    } else {
+      const myHtml = cheerio.load(body);
+      eventTitle = myHtml('title').text();
+      Event.create({
+        eventId: eventId,
+        eventName: eventTitle.slice(0,255) || '名称未設定',
+        eventPlace: '場所未設定',
+        eventTime: eventTime,
+        eventUrl: req.body.eventurl,
+        eventDesc: '未設定',
+        createdBy: req.user.id,
+        createdByName: req.user.username,
+        updatedAt: updatedAt
+      }).then(() => {
+        Eventfollow.create({
+          follow: req.user.id,
+          eventfollowed: eventId,
+          followname: req.user.username
+        }).then(() => {
+          res.redirect('/events/' + eventId);
+        })
+      });
+    }
+  });
+  /*
+  console.log(eventTitle);
   Event.create({
     eventId: eventId,
-    eventName: req.body.eventname.slice(0,255) || '名称未設定',
+    eventName: eventTitle.slice(0,255) || '名称未設定',
     eventPlace: req.body.eventplace.slice(0,255) || '場所未設定',
     eventTime: eventTime,
     eventUrl: req.body.eventurl,
@@ -37,6 +69,7 @@ router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
       res.redirect('/events/' + eventId);
     })
   });
+  */
 });
 
 router.get('/:eventId', (req, res, next) => {

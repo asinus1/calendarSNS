@@ -5,8 +5,17 @@ block content
     h2(style="font-weight: bold").my-3 興味のあるイベントの情報をみんなで共有しよう
     h3.my-3 今日の世界では、日々、様々なイベントが開催されています！興味のあるイベントの情報を、友人同士で共有しましょう！イベント情報の共有は、あなたの生活をきっと豊かにすることでしょう！
   if user
-    div
-      a(href="/events/new").btn.btn-info 興味のあるイベントを登録する
+    div.card.my-3
+      div.card-body
+        form(method="post" action="/events").my-3
+          input(type="hidden" name="_csrf" value!=csrfToken)
+          div.form-group
+            input(type="url" name="eventurl" placeholder="イベントのURLを入力してください")#eventurl.form-control
+            p.my-3 に
+          div.form-group 
+            input(type="datetime-local" name="eventtime")#eventtime.form-control
+            p.my-3 から参加します！
+            button(type="submit").btn.btn-info イベントを登録！
     - var hasEvent = events.length > 0
     h5.my-3 My Calender
     if hasEvent

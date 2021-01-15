@@ -6,9 +6,11 @@ const User = require('../models/user');
 const Follow = require('../models/follow');
 const Eventfollow = require('../models/eventfollow');
 const moment = require('moment-timezone');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', csrfProtection, function(req, res, next) {
   const title = 'あなたのカレンダー';
   if (req.user) {
     /*
@@ -110,11 +112,12 @@ router.get('/', function(req, res, next) {
       res.render('index', {
         title: title,
         user: req.user,
-        events: events
+        events: events,
+        csrfToken: req.csrfToken()
       });
     });
   } else {
-    res.render('index', { title: title, user: req.user });
+    res.render('index', { title: title, user: req.user, csrfToken: req.csrfToken() });
   }
 });
 
