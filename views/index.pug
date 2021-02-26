@@ -10,10 +10,10 @@ block content
         form(method="post" action="/events").my-3
           input(type="hidden" name="_csrf" value!=csrfToken)
           div.form-group
-            input(type="url" name="eventurl" placeholder="イベントのURLを入力してください")#eventurl.form-control
+            input(type="url" name="eventurl" placeholder="イベントのURLを入力してください" required)#eventurl.form-control
             p.my-3 に
-          div.form-group 
-            input(type="datetime-local" name="eventtime")#eventtime.form-control
+          div.form-group
+            input(type="datetime-local" name="eventtime" required)#eventtime.form-control
             p.my-3 から参加します！
             button(type="submit").btn.btn-info イベントを登録！
     - var hasEvent = events.length > 0
