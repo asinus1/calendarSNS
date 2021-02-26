@@ -24,6 +24,7 @@ router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
   request(req.body.eventurl, (err, res2, body) => {
     if (err) {
       console.error(err);
+      res.render('sorry');
     } else {
       const myHtml = cheerio.load(body);
       eventTitle = myHtml('title').text();
