@@ -13,27 +13,6 @@ const csrfProtection = csrf({ cookie: true });
 router.get('/', csrfProtection, function(req, res, next) {
   const title = 'あなたのカレンダー';
   if (req.user) {
-    /*
-    Eventfollow.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ['userId'],
-          required: true,
-          include: [
-            {
-              model: Follow,
-              where: {
-                follow: req.user.id
-              },
-              required: true
-            }
-          ]
-        }
-      ],
-      required: true
-    })
-    */
     Event.findAll({
       include: [
         {
@@ -58,53 +37,6 @@ router.get('/', csrfProtection, function(req, res, next) {
         }
       ]
     })
-   /*
-    Eventfollow.findAll({
-      include: [
-        {
-          model: Event,
-          required: true,
-          include: [
-            {
-              model: User,
-              attributes: ['userId'],
-              required: true,
-              include: [
-                {
-                  model: Follow,
-                  where: {
-                    follow: req.user.id
-                  },
-                  required: true
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    })
-    */
-    /*
-    Event.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ['userId'],
-          required: true,
-          include: [
-            {
-              model: Follow,
-              where: {
-                follow: req.user.id
-              },
-              required: true,
-            }
-          ]
-        }
-      ],
-      order: [['eventTime', 'ASC']]
-    })
-    */
     .then(events => {
       events.forEach((event) => {
         event.formattedEventTime = moment(event.eventTime).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
@@ -116,10 +48,17 @@ router.get('/', csrfProtection, function(req, res, next) {
         csrfToken: req.csrfToken()
       });
     });
-  } else {
-    res.render('index', { title: title, user: req.user, csrfToken: req.csrfToken() });
-  }
-});
+  } else { Event.findAll()
+  .then(events => {
+    events.forEach((event) => {
+      event.formattedEventTime = moment(event.eventTime).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
+    });
+    res.render('index', {
+      events: events,
+      csrfToken: req.csrfToken()
+    });
+  });
+}});
 
 /*
 router.get('/:userName', authenticationEnsurer, (req, res, next) => {
