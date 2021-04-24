@@ -93,12 +93,13 @@ router.get('/:eventId', (req, res, next) => {
         }
       }).then((eventfollowers) => {
         let isFollowed = 0;
-        eventfollowers.some((ef) => {
-          if (ef.follow === req.user.id) {
-            isFollowed = 1;
-            return true;
-          }
-        });
+        // eventfollowers.some((ef) => {
+        //   if (ef.follow === req.user.id) {
+        //     isFollowed = 1;
+        //     return true;
+        //   }
+        // }
+        // );
         event.formattedEventTime = moment(event.eventTime).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
         res.render('event', {
           user: req.user,
