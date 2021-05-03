@@ -4,6 +4,18 @@ block content
   div.jumbotron.my-3
     h2(style="font-weight: bold").my-3 興味のあるイベントの情報をみんなで共有しよう
     h3.my-3 今日の世界では、日々、様々なイベントが開催されています！興味のあるイベントの情報を、友人同士で共有しましょう！イベント情報の共有は、あなたの生活をきっと豊かにすることでしょう！
+  - var hasEvent = events.length > 0
+  h5.my-3 新規イベント
+  if hasEvent
+    table.table
+      tr
+        th イベント名
+        th 日時
+      each event in events
+        tr
+          td
+            a(href=`/events/${event.eventId}`) #{event.eventName}
+          td #{event.formattedEventTime}
   if user
     div.card.my-3
       div.card-body
@@ -16,24 +28,10 @@ block content
             input(type="datetime-local" name="eventtime" required)#eventtime.form-control
             p.my-3 から参加します！
             button(type="submit").btn.btn-info イベントを登録！
-    - var hasEvent = events.length > 0
-    h5.my-3 My Calender
-    if hasEvent
-      table.table
-        tr
-          th イベント名
-          th 日時
-        each event in events
-          tr
-            td
-              a(href=`/events/${event.eventId}`) #{event.eventName}
-            td #{event.formattedEventTime}
-    else
-      table.table
-        tr
-          td
-            h6(style="font-weight: bold").my-3 まだイベント予定はありません。
-            p
-              h7.my-3 イベントを登録するとここに表示されます。
-            p
-              h7.my-3 他のユーザーをフォローしましょう。彼/彼女らが気になっているイベントがここに表示されます。
+  else
+    table.table
+      tr
+        td
+          h6(style="font-weight: bold").my-3 まだ自分の予定はありません。
+          p
+            h7.my-3 イベントを登録するとここに表示されます。
